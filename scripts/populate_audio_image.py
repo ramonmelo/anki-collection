@@ -10,9 +10,10 @@ Prerequisites:
   3. Have Anki running with AnkiConnect active
 
 Usage:
-  python populate_audio_image.py
+  python populate_audio_image.py --deck "My Deck Name" --lang uk
 """
 
+import argparse
 import json
 import os
 import re
@@ -23,21 +24,35 @@ import requests
 from ddgs import DDGS
 from gtts import gTTS
 
-ANKI_CONNECT_URL = "http://localhost:8765"
-DECK_NAME = "<REPLACE WITH YOUR DECK NAME>"
-SOURCE_FIELD = "Front"  # field containing Ukrainian text
-BACK_FIELD = "Back"     # field containing English text (used for image search)
-AUDIO_FIELD = "Audio"
-IMAGE_FIELD = "Image"
-LANG = "uk"
 
-POPULATE_AUDIO = True
-POPULATE_IMAGES = True
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Populate Audio and Image fields for Anki notes."
+    )
+    parser.add_argument("--anki-url", default="http://localhost:8765",
+                        help="AnkiConnect URL (default: %(default)s)")
+    parser.add_argument("--deck", default="Personal UA",
+                        help="Anki deck name (default: %(default)s)")
+    parser.add_argument("--source-field", default="Front",
+                        help="Field containing source text for TTS (default: %(default)s)")
+    parser.add_argument("--back-field", default="Back",
+                        help="Field containing back text for image search (default: %(default)s)")
+    parser.add_argument("--audio-field", default="Audio",
+                        help="Field to store audio in (default: %(default)s)")
+    parser.add_argument("--image-field", default="Image",
+                        help="Field to store images in (default: %(default)s)")
+    parser.add_argument("--lang", default="uk",
+                        help="TTS language code (default: %(default)s)")
+    parser.add_argument("--no-audio", action="store_true",
+                        help="Skip audio generation")
+    parser.add_argument("--no-images", action="store_true",
+                        help="Skip image generation")
+    return parser.parse_args()
 
 
-def anki_request(action, **params):
+def anki_request(url, action, **params):
     payload = json.dumps({"action": action, "version": 6, "params": params})
-    req = urllib.request.Request(ANKI_CONNECT_URL, data=payload.encode("utf-8"))
+    req = urllib.request.Request(url, data=payload.encode("utf-8"))
     req.add_header("Content-Type", "application/json")
     response = json.loads(urllib.request.urlopen(req).read())
     if response.get("error"):
@@ -52,9 +67,9 @@ def clean_text(text):
     return text
 
 
-def generate_audio(text, filepath):
-    """Generate an mp3 file from Ukrainian text using gTTS."""
-    tts = gTTS(text=text, lang=LANG)
+def generate_audio(text, filepath, lang):
+    """Generate an mp3 file from text using gTTS."""
+    tts = gTTS(text=text, lang=lang)
     tts.save(filepath)
 
 
@@ -77,16 +92,16 @@ def fetch_image(query, filepath):
     return False
 
 
-def main():
-    note_ids = anki_request("findNotes", query=f'"deck:{DECK_NAME}"')
+def main(args):
+    note_ids = anki_request(args.anki_url, "findNotes", query=f'"deck:{args.deck}"')
     if not note_ids:
-        print(f"No notes found in deck '{DECK_NAME}'.")
+        print(f"No notes found in deck '{args.deck}'.")
         return
 
-    notes = anki_request("notesInfo", notes=note_ids)
-    print(f"Found {len(notes)} notes in '{DECK_NAME}'.")
+    notes = anki_request(args.anki_url, "notesInfo", notes=note_ids)
+    print(f"Found {len(notes)} notes in '{args.deck}'.")
 
-    media_dir = anki_request("getMediaDirPath")
+    media_dir = anki_request(args.anki_url, "getMediaDirPath")
     print(f"Media folder: {media_dir}")
 
     audio_gen = 0
@@ -100,9 +115,9 @@ def main():
         updates = {}
 
         # --- Audio ---
-        if POPULATE_AUDIO:
-            has_audio = fields.get(AUDIO_FIELD, {}).get("value", "").strip()
-            source_text = clean_text(fields.get(SOURCE_FIELD, {}).get("value", ""))
+        if not args.no_audio:
+            has_audio = fields.get(args.audio_field, {}).get("value", "").strip()
+            source_text = clean_text(fields.get(args.source_field, {}).get("value", ""))
 
             if has_audio or not source_text:
                 audio_skip += 1
@@ -110,17 +125,17 @@ def main():
                 filename = f"anki_tts_{note_id}.mp3"
                 filepath = os.path.join(media_dir, filename)
                 try:
-                    generate_audio(source_text, filepath)
-                    updates[AUDIO_FIELD] = f"[sound:{filename}]"
+                    generate_audio(source_text, filepath, args.lang)
+                    updates[args.audio_field] = f"[sound:{filename}]"
                     audio_gen += 1
                     print(f"  Audio: {source_text[:50]}...")
                 except Exception as e:
                     print(f"  Audio error on {note_id}: {e}")
 
         # --- Image ---
-        if POPULATE_IMAGES:
-            has_image = fields.get(IMAGE_FIELD, {}).get("value", "").strip()
-            back_text = clean_text(fields.get(BACK_FIELD, {}).get("value", ""))
+        if not args.no_images:
+            has_image = fields.get(args.image_field, {}).get("value", "").strip()
+            back_text = clean_text(fields.get(args.back_field, {}).get("value", ""))
 
             if has_image or not back_text:
                 image_skip += 1
@@ -130,7 +145,7 @@ def main():
                 filepath = os.path.join(media_dir, filename)
                 try:
                     if fetch_image(back_text, filepath):
-                        updates[IMAGE_FIELD] = f'<img src="{filename}">'
+                        updates[args.image_field] = f'<img src="{filename}">'
                         image_gen += 1
                         print(f"  Image: {back_text[:50]}...")
                     else:
@@ -143,6 +158,7 @@ def main():
         # --- Update note ---
         if updates:
             anki_request(
+                args.anki_url,
                 "updateNoteFields",
                 note={"id": note_id, "fields": updates},
             )
@@ -153,4 +169,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(parse_args())
