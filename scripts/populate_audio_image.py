@@ -76,7 +76,7 @@ def generate_audio(text, filepath, lang):
 def fetch_image(query, filepath):
     """Search DuckDuckGo for an image and download the first result."""
     with DDGS() as ddgs:
-        results = list(ddgs.images(query, max_results=5))
+        results = list(ddgs.images(query, max_results=5, size="Medium", type_image="photo", layout="Wide", license_image="Public"))
 
     for result in results:
         try:
