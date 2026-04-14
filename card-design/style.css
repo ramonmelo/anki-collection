@@ -49,9 +49,19 @@
     text-align: left;
 }
 
+.example-translated {
+    font-size: 16px;
+    color: #666;
+    margin-top: 8px;
+}
+
 .nightMode .example {
     background-color: #3a3f47;
     color: #d0d0d0;
+}
+
+.nightMode .example-translated {
+    color: #aaa;
 }
 
 .nightMode.card {

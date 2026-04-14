@@ -8,22 +8,9 @@
     for (let i = 0; i < words.length; i++) {
         var clean = words[i].replace(/[.,\/#!?$%\^&\*;:{}=\-_`~()»«؟'"]/g, "").toLowerCase();
         var url = "https://translate.google.com/?sl=uk&tl=en&op=translate&text=" + encodeURIComponent(clean);
-        processed += '<a href="' + url + '" class="word-link" data-url="' + url + '">' + words[i] + '</a> ';
+        processed += '<a href="' + url + '" class="word-link">' + words[i] + '</a> ';
     }
 
     el.innerHTML = processed.trim();
-
-    el.addEventListener("click", function(e) {
-        var link = e.target.closest(".word-link");
-        if (link) {
-            e.preventDefault();
-            e.stopPropagation();
-            var targetUrl = link.getAttribute("data-url");
-            // Try multiple methods for cross-platform compatibility
-            try { window.open(targetUrl, "_system"); } catch(ex) {}
-            try { window.open(targetUrl, "_blank"); } catch(ex) {}
-            window.location.href = targetUrl;
-        }
-    });
 </script>
 <div class="audio">{{Audio}}</div>
