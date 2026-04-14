@@ -1,0 +1,20 @@
+# Anki Cards Specifications for Ukrainian
+
+> https://en.wikipedia.org/wiki/Ukrainian_grammar
+
+Consult the link above on any doubt.
+
+## Available Tags
+
+Tags are based on the "Parts of speech (части́на мо́ви)" found on the Ukrainian Grammar
+
+- іменник: noun
+- прикметник: adjective
+- дієслово: verb
+- числівник: numeral
+- займенник: pronoun
+- прислівник: adverb
+- частка: particle
+- прийменник: preposition
+- сполучник: conjunction
+- вигук: interjection
