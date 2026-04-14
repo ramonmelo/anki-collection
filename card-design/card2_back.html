@@ -1,0 +1,35 @@
+{{FrontSide}}
+
+<hr id=answer>
+
+<div id="sentence">{{Front}}</div>
+<script>
+    var el = document.getElementById("sentence");
+    var words = el.textContent.split(/\s+/).filter(function(w) { return w.length > 0; });
+    var processed = "";
+
+    for (let i = 0; i < words.length; i++) {
+        var clean = words[i].replace(/[.,\/#!?$%\^&\*;:{}=\-_`~()»«؟'"]/g, "").toLowerCase();
+        var url = "https://translate.google.com/?sl=uk&tl=en&op=translate&text=" + encodeURIComponent(clean);
+        processed += '<a href="' + url + '" class="word-link" data-url="' + url + '">' + words[i] + '</a> ';
+    }
+
+    el.innerHTML = processed.trim();
+
+    el.addEventListener("click", function(e) {
+        var link = e.target.closest(".word-link");
+        if (link) {
+            e.preventDefault();
+            e.stopPropagation();
+            var targetUrl = link.getAttribute("data-url");
+            // Try multiple methods for cross-platform compatibility
+            try { window.open(targetUrl, "_system"); } catch(ex) {}
+            try { window.open(targetUrl, "_blank"); } catch(ex) {}
+            window.location.href = targetUrl;
+        }
+    });
+</script>
+
+<div class="audio">{{Audio}}</div>
+
+{{#Example}}<div class="example">{{Example}}</div>{{/Example}}
