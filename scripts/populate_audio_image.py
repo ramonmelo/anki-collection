@@ -39,6 +39,10 @@ def parse_args():
                         help="Field containing back text for image search (default: %(default)s)")
     parser.add_argument("--audio-field", default="Audio",
                         help="Field to store audio in (default: %(default)s)")
+    parser.add_argument("--example-field", default="Example",
+                        help="Field to store example in (default: %(default)s)")
+    parser.add_argument("--audio-example-field", default="AudioExample",
+                        help="Field to store example audio in (default: %(default)s)")
     parser.add_argument("--image-field", default="Image",
                         help="Field to store images in (default: %(default)s)")
     parser.add_argument("--lang", default="uk",
@@ -116,6 +120,7 @@ def main(args):
 
         # --- Audio ---
         if not args.no_audio:
+            # Main Audio
             has_audio = fields.get(args.audio_field, {}).get("value", "").strip()
             source_text = clean_text(fields.get(args.source_field, {}).get("value", ""))
 
@@ -131,6 +136,21 @@ def main(args):
                     print(f"  Audio: {source_text[:50]}...")
                 except Exception as e:
                     print(f"  Audio error on {note_id}: {e}")
+
+            # Example Audio
+            has_ex_audio = fields.get(args.audio_example_field, {}).get("value", "").strip()
+            ex_text = clean_text(fields.get(args.example_field, {}).get("value", ""))
+
+            if not has_ex_audio and ex_text:
+                filename = f"anki_tts_ex_{note_id}.mp3"
+                filepath = os.path.join(media_dir, filename)
+                try:
+                    generate_audio(ex_text, filepath, args.lang)
+                    updates[args.audio_example_field] = f"[sound:{filename}]"
+                    audio_gen += 1
+                    print(f"  Example Audio: {ex_text[:50]}...")
+                except Exception as e:
+                    print(f"  Example Audio error on {note_id}: {e}")
 
         # --- Image ---
         if not args.no_images:
