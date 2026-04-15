@@ -1,0 +1,32 @@
+# Anki Cards Specifications for Ukrainian
+
+> https://en.wikipedia.org/wiki/Ukrainian_grammar
+
+Consult the link above on any doubt.
+
+## Available Tags
+
+Tags are based on the "Parts of speech (части́на мо́ви)" found on the Ukrainian Grammar
+
+- іменник: noun
+- прикметник: adjective
+- дієслово: verb
+- числівник: numeral
+- займенник: pronoun
+- прислівник: adverb
+- частка: particle
+- прийменник: preposition
+- сполучник: conjunction
+- вигук: interjection
+
+## How to build a new import file
+
+A new import file is always based on the `template.txt` file.
+Each field on the template, can be described as:
+
+<FRONT>: The front face of the Note. Usually it should be just a single word. Special rules below:
+  - Verbs: Should contain infinitive form of the verb, and if the verb can also be a perfective verb, include it as well.
+<BACK>: The back face of the Note. It is the translation of the front face.
+<EXAMPLE>: Short phrase example using the content of the front face.
+<EXAMPLE TRANSLATED>: Translated version of the example.
+<TAG>: Note Tag based on the tags described above.

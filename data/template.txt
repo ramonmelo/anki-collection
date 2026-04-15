@@ -1,0 +1,4 @@
+#separator:tab
+#html:true
+#tags column:8
+<FRONT>	<BACK>			<EXAMPLE>	<EXAMPLE TRANSLATED>		<TAG>

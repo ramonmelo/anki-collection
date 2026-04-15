@@ -1,0 +1,18 @@
+description = "Generates a new Anki import file for a Ukrainian vocabulary theme"
+prompt = """
+Based on the following specifications and template:
+
+@data/specs.txt
+@data/template.txt
+
+Create a new Anki import file for the theme: {{args}}.
+
+Instructions:
+1. Generate 40 items related to the theme "{{args}}".
+2. Try to cover as many "Parts of speech" with both vocabulary and examples.
+3. The example phrase should be on A1 to A2 level, and at max 10 words long.
+4. Follow the specification found at @data/specs.txt for each item field.
+5. Use the exact tab-separated format from @data/template.txt.
+6. Provide the full content of the file.
+7. Suggest saving the output to a file named `ukrainian_{{args}}_import.txt` at the root folder.
+"""
