@@ -1,13 +1,19 @@
 {{FrontSide}}
 
-<hr id=answer>
+<hr id="answer">
 
-{{Back}}
+<div class="card-container">
+    <div class="translation">{{Back}}</div>
 
-{{#Example}}
-<div class="example">
-    {{Example}}
-    <div class="audio">{{AudioExample}}</div>
-    {{#ExampleTranslated}}<div class="example-translated">{{ExampleTranslated}}</div>{{/ExampleTranslated}}
+    {{#Example}}
+    <div class="example">
+        <div class="example-text">
+            {{Example}}
+            <div class="audio">{{AudioExample}}</div>
+        </div>
+        {{#ExampleTranslated}}
+        <div class="example-translated">{{ExampleTranslated}}</div>
+        {{/ExampleTranslated}}
+    </div>
+    {{/Example}}
 </div>
-{{/Example}}

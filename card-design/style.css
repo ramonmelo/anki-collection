@@ -1,74 +1,134 @@
+:root {
+    --card-bg: #ffffff;
+    --card-text: #202124;
+    --link-color: #1a73e8;
+    --example-bg: #f8f9fa;
+    --example-text: #3c4043;
+    --example-sub: #70757a;
+    --hr-color: #dadce0;
+    --audio-bg: #e8f0fe;
+    --audio-icon: #1a73e8;
+}
+
+.nightMode {
+    --card-bg: #202124;
+    --card-text: #e8eaed;
+    --link-color: #8ab4f8;
+    --example-bg: #303134;
+    --example-text: #e8eaed;
+    --example-sub: #9aa0a6;
+    --hr-color: #3c4043;
+    --audio-bg: #3c4043;
+    --audio-icon: #8ab4f8;
+}
+
 .card {
-    font-family: arial;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     font-size: 32px;
     text-align: center;
-    color: black;
-    background-color: white;
-    width: 80%;
+    color: var(--card-text);
+    background-color: var(--card-bg);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.4;
+}
+
+.card-container {
+    max-width: 600px;
     margin: 0 auto;
-    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+#sentence {
+    font-weight: 500;
+    margin: 10px 0;
+}
+
+#sentence a {
+    color: var(--link-color);
+    text-decoration: none;
+    border-radius: 4px;
+    padding: 2px 4px;
+    transition: background-color 0.2s;
+}
+
+#sentence a:hover {
+    background-color: var(--audio-bg);
+    text-decoration: underline;
 }
 
 .image {
-    margin-bottom: 16px;
+    margin-bottom: 8px;
+    width: 100%;
 }
 
 .image img {
     max-width: 100%;
-    max-height: 150px;
-    border-radius: 8px;
+    max-height: 200px;
+    border-radius: 12px;
     object-fit: contain;
-}
-
-#sentence {
-    width: 100%;
-}
-
-#sentence a {
-    color: #1a73e8;
-    text-decoration: none;
-}
-
-#sentence a:hover {
-    text-decoration: underline;
-}
-
-.audio {
-    font-family: arial;
-    font-size: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .example {
-    margin-top: 20px;
-    padding: 14px 18px;
-    background-color: #f0f4f8;
-    border-radius: 8px;
-    font-size: 22px;
-    line-height: 1.5;
-    color: #333;
+    margin-top: 24px;
+    padding: 16px;
+    background-color: var(--example-bg);
+    border-radius: 12px;
+    font-size: 20px;
     text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--hr-color);
+}
+
+.example-text {
+    color: var(--example-text);
+    margin-bottom: 8px;
+    line-height: 1.5;
 }
 
 .example-translated {
     font-size: 16px;
-    color: #666;
-    margin-top: 8px;
+    color: var(--example-sub);
+    font-style: italic;
 }
 
-.nightMode .example {
-    background-color: #3a3f47;
-    color: #d0d0d0;
+hr#answer {
+    width: 100%;
+    border: none;
+    border-top: 1px solid var(--hr-color);
+    margin: 20px 0;
 }
 
-.nightMode .example-translated {
-    color: #aaa;
+/* Audio Button Styling */
+.replay-button {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background-color: var(--audio-bg) !important;
+    border-radius: 50% !important;
+    text-decoration: none !important;
+    margin: 8px !important;
+    transition: transform 0.1s ease;
 }
 
-.nightMode.card {
-    color: #e0e0e0;
-    background-color: #303030;
+.replay-button:active {
+    transform: scale(0.9);
 }
 
-.nightMode #sentence a {
-    color: #8ab4f8;
+.replay-button svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--audio-icon);
+}
+
+/* For mobile accessibility */
+.audio {
+    margin: 10px 0;
 }

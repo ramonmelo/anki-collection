@@ -1,28 +1,57 @@
 {{FrontSide}}
 
-<hr id=answer>
+<hr id="answer">
 
-<div id="sentence">{{Front}}</div>
+<div class="card-container">
+    <div id="sentence">{{Front}}</div>
+    <div class="audio">{{Audio}}</div>
+
+    {{#Example}}
+    <div class="example">
+        <div class="example-text">
+            {{Example}}
+            <div class="audio">{{AudioExample}}</div>
+        </div>
+        {{#ExampleTranslated}}
+        <div class="example-translated">{{ExampleTranslated}}</div>
+        {{/ExampleTranslated}}
+    </div>
+    {{/Example}}
+</div>
+
 <script>
+(function() {
     var el = document.getElementById("sentence");
-    var words = el.textContent.split(/\s+/).filter(function(w) { return w.length > 0; });
-    var processed = "";
+    if (!el) return;
 
-    for (let i = 0; i < words.length; i++) {
-        var clean = words[i].replace(/[.,\/#!?$%\^&\*;:{}=\-_`~()»«؟'"]/g, "").toLowerCase();
-        var url = "https://translate.google.com/?sl=uk&tl=en&op=translate&text=" + encodeURIComponent(clean);
-        processed += '<a href="' + url + '" class="word-link">' + words[i] + '</a> ';
+    function wrapWords(node) {
+        if (node.nodeType === 3) {
+            var text = node.textContent;
+            var words = text.split(/(\s+)/);
+            var fragment = document.createDocumentFragment();
+
+            words.forEach(function(word) {
+                if (/\S/.test(word)) {
+                    var clean = word.replace(/[.,\/#!?$%\^&\*;:{}=\-_`~()»«؟'"]/g, "").toLowerCase();
+                    var url = "https://translate.google.com/?sl=uk&tl=en&op=translate&text=" + encodeURIComponent(clean);
+                    
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.className = 'word-link';
+                    a.textContent = word;
+                    fragment.appendChild(a);
+                } else {
+                    fragment.appendChild(document.createTextNode(word));
+                }
+            });
+
+            node.parentNode.replaceChild(fragment, node);
+        } else if (node.nodeType === 1 && node.childNodes && !/^(a|script|style)$/i.test(node.tagName)) {
+            var children = Array.prototype.slice.call(node.childNodes);
+            children.forEach(wrapWords);
+        }
     }
 
-    el.innerHTML = processed.trim();
+    wrapWords(el);
+})();
 </script>
-
-<div class="audio">{{Audio}}</div>
-
-{{#Example}}
-<div class="example">
-    {{Example}}
-    <div class="audio">{{AudioExample}}</div>
-    {{#ExampleTranslated}}<div class="example-translated">{{ExampleTranslated}}</div>{{/ExampleTranslated}}
-</div>
-{{/Example}}

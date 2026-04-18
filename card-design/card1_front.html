@@ -1,16 +1,44 @@
-<div class="image">{{Image}}</div>
-<div id="sentence">{{Front}}</div>
-<script>
-    var el = document.getElementById("sentence");
-    var words = el.textContent.split(/\s+/).filter(function(w) { return w.length > 0; });
-    var processed = "";
+<div class="card-container">
+    <div class="image">{{Image}}</div>
+    <div id="sentence">{{Front}}</div>
+    <div class="audio">{{Audio}}</div>
+</div>
 
-    for (let i = 0; i < words.length; i++) {
-        var clean = words[i].replace(/[.,\/#!?$%\^&\*;:{}=\-_`~()»«؟'"]/g, "").toLowerCase();
-        var url = "https://translate.google.com/?sl=uk&tl=en&op=translate&text=" + encodeURIComponent(clean);
-        processed += '<a href="' + url + '" class="word-link">' + words[i] + '</a> ';
+<script>
+(function() {
+    var el = document.getElementById("sentence");
+    if (!el) return;
+
+    function wrapWords(node) {
+        if (node.nodeType === 3) { // Text node
+            var text = node.textContent;
+            var words = text.split(/(\s+)/);
+            var fragment = document.createDocumentFragment();
+
+            words.forEach(function(word) {
+                if (/\S/.test(word)) {
+                    // Clean word for translation (keep only letters and common Ukrainian symbols)
+                    var clean = word.replace(/[.,\/#!?$%\^&\*;:{}=\-_`~()»«؟'"]/g, "").toLowerCase();
+                    var url = "https://translate.google.com/?sl=uk&tl=en&op=translate&text=" + encodeURIComponent(clean);
+                    
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.className = 'word-link';
+                    a.textContent = word;
+                    fragment.appendChild(a);
+                } else {
+                    fragment.appendChild(document.createTextNode(word));
+                }
+            });
+
+            node.parentNode.replaceChild(fragment, node);
+        } else if (node.nodeType === 1 && node.childNodes && !/^(a|script|style)$/i.test(node.tagName)) {
+            // Traverse element nodes, but skip links or scripts
+            var children = Array.prototype.slice.call(node.childNodes);
+            children.forEach(wrapWords);
+        }
     }
 
-    el.innerHTML = processed.trim();
+    wrapWords(el);
+})();
 </script>
-<div class="audio">{{Audio}}</div>
