@@ -3,20 +3,9 @@
 <hr id="answer">
 
 <div class="card-container">
-    <div id="sentence">{{Front}}</div>
-    <div class="audio">{{Audio}}</div>
-
-    {{#Example}}
-    <div class="example">
-        <div class="example-text">
-            {{Example}}
-            <div class="audio">{{AudioExample}}</div>
-        </div>
-        {{#ExampleTranslated}}
-        <div class="example-translated">{{ExampleTranslated}}</div>
-        {{/ExampleTranslated}}
-    </div>
-    {{/Example}}
+    <div id="sentence" class="phrase-main">{{Example}}</div>
+    <div class="audio-box">{{AudioExample}}</div>
+    <div class="translation-sub">{{Front}}</div>
 </div>
 
 <script>

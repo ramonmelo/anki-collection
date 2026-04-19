@@ -1,7 +1,8 @@
 <div class="card-container">
+    <div class="word-badge">{{Front}}</div>
+    <div id="sentence" class="phrase-main">{{Example}}</div>
+    <div class="audio-box">{{AudioExample}}</div>
     <div class="image">{{Image}}</div>
-    <div id="sentence">{{Front}}</div>
-    <div class="audio">{{Audio}}</div>
 </div>
 
 <script>
@@ -17,7 +18,6 @@
 
             words.forEach(function(word) {
                 if (/\S/.test(word)) {
-                    // Clean word for translation (keep only letters and common Ukrainian symbols)
                     var clean = word.replace(/[.,\/#!?$%\^&\*;:{}=\-_`~()»«؟'"]/g, "").toLowerCase();
                     var url = "https://translate.google.com/?sl=uk&tl=en&op=translate&text=" + encodeURIComponent(clean);
                     
@@ -33,7 +33,6 @@
 
             node.parentNode.replaceChild(fragment, node);
         } else if (node.nodeType === 1 && node.childNodes && !/^(a|script|style)$/i.test(node.tagName)) {
-            // Traverse element nodes, but skip links or scripts
             var children = Array.prototype.slice.call(node.childNodes);
             children.forEach(wrapWords);
         }
