@@ -80,7 +80,7 @@ def generate_audio(text, filepath, lang):
 def fetch_image(query, filepath):
     """Search DuckDuckGo for an image and download the first result."""
     with DDGS() as ddgs:
-        results = list(ddgs.images(query, max_results=5, size="Medium", type_image="photo", layout="Wide", license_image="Public"))
+        results = list(ddgs.images(query, max_results=5, size="Medium"))
 
     for result in results:
         try:
@@ -116,6 +116,7 @@ def main(args):
     for note in notes:
         fields = note["fields"]
         note_id = note["noteId"]
+        tags = " ".join(note["tags"])
         updates = {}
 
         # --- Audio ---
@@ -164,14 +165,15 @@ def main(args):
                 filename = f"anki_img_{note_id}.{ext}"
                 filepath = os.path.join(media_dir, filename)
                 try:
-                    if fetch_image(back_text, filepath):
+                    query = f"{back_text} {tags}"
+                    if fetch_image(query, filepath):
                         updates[args.image_field] = f'<img src="{filename}">'
                         image_gen += 1
                         print(f"  Image: {back_text[:50]}...")
                     else:
                         print(f"  No image found for: {back_text[:50]}...")
                 except Exception as e:
-                    print(f"  Image error on {note_id}: {e}")
+                    print(f"  Image error on {note_id}/{back_text}: {e}")
                 # Be polite to DuckDuckGo
                 time.sleep(1)
 
