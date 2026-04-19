@@ -1,18 +1,36 @@
 description = "Generates a new Anki import file for a Ukrainian vocabulary theme"
 prompt = """
-Based on the following specifications and template:
-
-@data/specs.txt
-@data/template.txt
-
 Create a new Anki import file for the theme: {{args}}.
 
-Instructions:
-1. Generate 40 items related to the theme "{{args}}".
-2. Try to cover as many "Parts of speech" with both vocabulary and examples.
-3. The example phrase should be on A1 to A2 level, and at max 10 words long.
-4. Follow the specification found at @data/specs.txt for each item field.
-5. Use the exact tab-separated format from @data/template.txt.
-6. Provide the full content of the file.
-7. Suggest saving the output to a file named `ukrainian_{{args}}_import.txt` at the root folder.
+### Formatting Rules
+- Use the exact tab-separated format below for each line, do not include a header. Do not deviate from this format.:
+#separator:tab
+#html:true
+#tags column:8
+<FRONT>	<BACK>			<EXAMPLE>	<EXAMPLE TRANSLATED>		<TAG>
+
+### Content Requirements
+1. **Quantity**: Generate items related to "{{args}}" and don't pass 50 items. If you cannot find 50 relevant items, it's better to have fewer high-quality items than to include irrelevant ones just to reach the quota.
+2. **Diversity**: Try to cover various Parts of Speech, but do not include more than necessary: именник (noun), прикметник (adjective), дієслово (verb), числівник (numeral), займенник (pronoun), прислівник (adverb), частка (particle), прийменник (preposition), сполучник (conjunction), вигук (interjection).
+3. **Revision**: If there are existing items in the file related to "{{args}}", you can revise them for better quality, but do not add new items that are not directly related to the theme just to reach 50 items. Focus on quality and relevance over quantity. If you notice that some items are not directly related to the theme, you can remove them to maintain the integrity of the content.
+4. **Example Phrases**: Ensure that the example phrases are natural and appropriate for A1-A2 level learners. The target word (or its declined/conjugated form) must be wrapped in `<b>` tags to highlight it in the example.
+5. **Golden Rule**: Stick to the theme "{{args}}" and ensure that every item is relevant to it. Do not include items that are only tangentially related or unrelated just to fill the quota of 50 items.
+
+### Field Specifications
+- **<FRONT>**: The primary Ukrainian word. For **verbs**, include both imperfective and perfective forms (e.g., "писати/написати").
+- **<BACK>**: The English translation of the front word.
+- **<EXAMPLE>**: A natural Ukrainian phrase (A1-A2 level, max 10 words).
+  - **CRITICAL**: You MUST wrap the target word (or its declined/conjugated form) in `<b>` tags. Example: `Я бачу <b>велику</b> хмару`.
+- **<EXAMPLE TRANSLATED>**: The English translation of the example phrase.
+- **<TAG>**: A space-separated list of tags including:
+  - The Part of Speech (in Ukrainian, e.g., "іменник").
+  - **Metadata**: 
+    - Nouns: Include gender (masculine, feminine, or neuter).
+    - Verbs: Include aspect (imperfective or perfective).
+    - Adjectives: Include degree (positive, comparative, or superlative).
+    - Prepositions: Include the case it governs.
+  - **Theme**: Always include "{{args}}" as a tag but just the "core" part of the theme (e.g., for "Ukrainian weather", the tag would be "weather").
+
+### Output
+Provide the full content of the file. Suggest saving the output to `ukrainian_{{args}}.txt` at the root folder.
 """
