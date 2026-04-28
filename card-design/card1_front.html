@@ -1,43 +1,5 @@
 <div class="card-container">
-    <div class="word-badge">{{Front}}</div>
-    <div id="sentence" class="phrase-main">{{Example}}</div>
-    <div class="audio-box">{{AudioExample}}</div>
+    <div class="phrase-main">{{Front}}</div>
+    <div class="audio-box">{{Audio}}</div>
     <div class="image">{{Image}}</div>
 </div>
-
-<script>
-(function() {
-    var el = document.getElementById("sentence");
-    if (!el) return;
-
-    function wrapWords(node) {
-        if (node.nodeType === 3) { // Text node
-            var text = node.textContent;
-            var words = text.split(/(\s+)/);
-            var fragment = document.createDocumentFragment();
-
-            words.forEach(function(word) {
-                if (/\S/.test(word)) {
-                    var clean = word.replace(/[.,\/#!?$%\^&\*;:{}=\-_`~()»«؟'"]/g, "").toLowerCase();
-                    var url = "https://translate.google.com/?sl=uk&tl=en&op=translate&text=" + encodeURIComponent(clean);
-                    
-                    var a = document.createElement('a');
-                    a.href = url;
-                    a.className = 'word-link';
-                    a.textContent = word;
-                    fragment.appendChild(a);
-                } else {
-                    fragment.appendChild(document.createTextNode(word));
-                }
-            });
-
-            node.parentNode.replaceChild(fragment, node);
-        } else if (node.nodeType === 1 && node.childNodes && !/^(a|script|style)$/i.test(node.tagName)) {
-            var children = Array.prototype.slice.call(node.childNodes);
-            children.forEach(wrapWords);
-        }
-    }
-
-    wrapWords(el);
-})();
-</script>
