@@ -31,7 +31,7 @@ def parse_args():
     )
     parser.add_argument("--anki-url", default="http://localhost:8765",
                         help="AnkiConnect URL (default: %(default)s)")
-    parser.add_argument("--deck", default="Personal UA",
+    parser.add_argument("--deck", default="General Ukrainian",
                         help="Anki deck name (default: %(default)s)")
     parser.add_argument("--source-field", default="Front",
                         help="Field containing source text for TTS (default: %(default)s)")
