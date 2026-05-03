@@ -10,19 +10,25 @@ Prerequisites:
   3. Have Anki running with AnkiConnect active
 
 Usage:
-  python populate_audio_image.py --deck "My Deck Name" --lang uk
+  python review_cards.py --deck "My Deck Name" --lang uk
 """
 
 import argparse
 import json
 import os
 import re
+import sys
 import time
 import urllib.request
 
 import requests
 from ddgs import DDGS
 from gtts import gTTS
+
+# Add the script directory to the python path to import local modules
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from translate import translate
+from generate_example import generate_example
 
 
 def parse_args():
@@ -41,6 +47,8 @@ def parse_args():
                         help="Field to store audio in (default: %(default)s)")
     parser.add_argument("--example-field", default="Example",
                         help="Field to store example in (default: %(default)s)")
+    parser.add_argument("--example-translated-field", default="ExampleTranslated",
+                        help="Field to store example translated in (default: %(default)s)")
     parser.add_argument("--audio-example-field", default="AudioExample",
                         help="Field to store example audio in (default: %(default)s)")
     parser.add_argument("--image-field", default="Image",
@@ -118,6 +126,28 @@ def main(args):
         note_id = note["noteId"]
         tags = " ".join(note["tags"])
         updates = {}
+
+        # --- Vocabulary Example Generation ---
+        source_text = clean_text(fields.get(args.source_field, {}).get("value", ""))
+        if "vocabulary" in tags and source_text:
+            has_example = fields.get(args.example_field, {}).get("value", "").strip()
+            if not has_example:
+                try:
+                    print(f"  Generating example for: {source_text}...")
+                    example_text = generate_example(source_text)
+                    if example_text:
+                        example_translated = translate(args.lang, "en", example_text)
+                        
+                        updates[args.example_field] = example_text
+                        updates[args.example_translated_field] = example_translated
+                        
+                        # Update local fields so audio generation can use it
+                        fields[args.example_field] = {"value": example_text}
+                        fields[args.example_translated_field] = {"value": example_translated}
+                        print(f"    Example: {example_text}")
+                        print(f"    Translated: {example_translated}")
+                except Exception as e:
+                    print(f"  Example generation error on {note_id}: {e}")
 
         # --- Audio ---
         if not args.no_audio:
