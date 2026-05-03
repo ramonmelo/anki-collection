@@ -2,12 +2,21 @@ description = "Generates a new Anki import file for a Ukrainian vocabulary theme
 prompt = """
 Create a new Anki import file for the theme: {{args}}.
 
+If {{args}} points to an existing file, it can be one of the following:
+- A file that already follows the same format as described below, in which case you can revise the existing items for better quality and relevance to the theme.
+- A file that does not follow the format, it will be a list of Ukrainian words related to the theme, one word per line. In this case, make sure to use all words from the file and create new items for them following the format and content requirements below. The list of words may include various parts of speech, which is fine, so make sure to use all of them and create items for each word accordingly.
+
 ### Formatting Rules
 - Use the exact tab-separated format below for each line, do not include a header. Do not deviate from this format.:
+- Replace the placeholders with the appropriate content for each item. Ensure that the example phrases are natural and appropriate for A1-A2 level learners, and that the target word (or its declined/conjugated form) is wrapped in `<b>` tags to highlight it in the example.
+- Replace the \t with actual tab characters in the output. Do not include the backslashes or the word "tab" in the output. The tabs are crucial for the correct formatting of the Anki import file.
+
+```txt
 #separator:tab
 #html:true
 #tags column:8
-<FRONT>	<BACK>			<EXAMPLE>	<EXAMPLE TRANSLATED>		<TAG>
+<FRONT>\t<BACK>\t\t\t<EXAMPLE>\t<EXAMPLE TRANSLATED>\t\t<TAG>
+```
 
 ### Content Requirements
 1. **Quantity**: Generate items related to "{{args}}" and don't pass 50 items. If you cannot find 50 relevant items, it's better to have fewer high-quality items than to include irrelevant ones just to reach the quota.
