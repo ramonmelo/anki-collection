@@ -87,8 +87,11 @@ def generate_audio(text, filepath, lang):
 
 def fetch_image(query, filepath):
     """Search DuckDuckGo for an image and download the first result."""
+
+    refined_query = f"{query} stock photo"
+
     with DDGS() as ddgs:
-        results = list(ddgs.images(query, max_results=5, size="Medium"))
+        results = list(ddgs.images(refined_query, max_results=5, size="Medium"))
 
     for result in results:
         try:
@@ -195,7 +198,7 @@ def main(args):
                 filename = f"anki_img_{note_id}.{ext}"
                 filepath = os.path.join(media_dir, filename)
                 try:
-                    query = f"{back_text} {tags}"
+                    query = f"{back_text}"
                     if fetch_image(query, filepath):
                         updates[args.image_field] = f'<img src="{filename}">'
                         image_gen += 1
