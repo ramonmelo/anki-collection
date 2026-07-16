@@ -130,13 +130,33 @@ def main(args):
         tags = " ".join(note["tags"])
         updates = {}
 
-        # --- Vocabulary Example Generation ---
+        # --- Source field ---
         orig_source = fields.get(args.source_field, {}).get("value", "")
         source_text = clean_text(orig_source).lower()
         if orig_source != source_text:
             updates[args.source_field] = source_text
             fields[args.source_field] = {"value": source_text}
 
+        # --- Back field ---
+        orig_back = fields.get(args.back_field, {}).get("value", "")
+
+        # --- Translate back field ---
+        if not orig_back and source_text:
+            try:
+                print(f"  Translating source '{source_text}' to English for empty back field...")
+                translated = translate(args.lang, "en", source_text)
+                if translated:
+                    orig_back = clean_text(translated).lower()
+                    print(f"    Translated: {orig_back}")
+            except Exception as e:
+                print(f"  Translation error for empty back field on note {note_id}: {e}")
+
+        back_text = clean_text(orig_back).lower()
+        if orig_back != back_text:
+            updates[args.back_field] = back_text
+            fields[args.back_field] = {"value": back_text}
+
+        # --- Vocabulary Example Generation ---
         if "vocabulary" in tags and source_text:
             has_example = fields.get(args.example_field, {}).get("value", "").strip()
             if not has_example:
@@ -191,29 +211,32 @@ def main(args):
                 except Exception as e:
                     print(f"  Example Audio error on {note_id}: {e}")
 
+
         # --- Image ---
         if not args.no_images:
             has_image = fields.get(args.image_field, {}).get("value", "").strip()
-            back_text = clean_text(fields.get(args.back_field, {}).get("value", ""))
 
-            if has_image or not back_text:
+            if has_image:
                 image_skip += 1
             else:
-                ext = "jpg"
-                filename = f"anki_img_{note_id}.{ext}"
-                filepath = os.path.join(media_dir, filename)
-                try:
-                    query = f"{back_text}"
-                    if fetch_image(query, filepath):
-                        updates[args.image_field] = f'<img src="{filename}">'
-                        image_gen += 1
-                        print(f"  Image: {back_text[:50]}...")
-                    else:
-                        print(f"  No image found for: {back_text[:50]}...")
-                except Exception as e:
-                    print(f"  Image error on {note_id}/{back_text}: {e}")
-                # Be polite to DuckDuckGo
-                time.sleep(1)
+                if not back_text:
+                    image_skip += 1
+                else:
+                    ext = "jpg"
+                    filename = f"anki_img_{note_id}.{ext}"
+                    filepath = os.path.join(media_dir, filename)
+                    try:
+                        query = f"{back_text}"
+                        if fetch_image(query, filepath):
+                            updates[args.image_field] = f'<img src="{filename}">'
+                            image_gen += 1
+                            print(f"  Image: {back_text[:50]}...")
+                        else:
+                            print(f"  No image found for: {back_text[:50]}...")
+                    except Exception as e:
+                        print(f"  Image error on {note_id}/{back_text}: {e}")
+                    # Be polite to DuckDuckGo
+                    time.sleep(1)
 
         # --- Update note ---
         if updates:
