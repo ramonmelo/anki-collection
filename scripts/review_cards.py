@@ -131,7 +131,12 @@ def main(args):
         updates = {}
 
         # --- Vocabulary Example Generation ---
-        source_text = clean_text(fields.get(args.source_field, {}).get("value", ""))
+        orig_source = fields.get(args.source_field, {}).get("value", "")
+        source_text = clean_text(orig_source).lower()
+        if orig_source != source_text:
+            updates[args.source_field] = source_text
+            fields[args.source_field] = {"value": source_text}
+
         if "vocabulary" in tags and source_text:
             has_example = fields.get(args.example_field, {}).get("value", "").strip()
             if not has_example:
@@ -156,7 +161,7 @@ def main(args):
         if not args.no_audio:
             # Main Audio
             has_audio = fields.get(args.audio_field, {}).get("value", "").strip()
-            source_text = clean_text(fields.get(args.source_field, {}).get("value", ""))
+            source_text = clean_text(fields.get(args.source_field, {}).get("value", "")).lower()
 
             if has_audio or not source_text:
                 audio_skip += 1
