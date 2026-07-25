@@ -4,6 +4,7 @@ import os
 import sys
 from ollama import generate
 from ollama import GenerateResponse
+from config import EXTRACT_MODEL
 
 prompt = """\
 Extract all the unique vocabulary words from the attached image and output as a list of words, one per line.
@@ -18,7 +19,7 @@ Please follow these rules:
 
 def extract_vocabulary_from_image(img_path):
     response: GenerateResponse = generate(
-        model='gemma4:12b', 
+        model=EXTRACT_MODEL, 
         prompt=prompt,
         images=[img_path],
         think=False,

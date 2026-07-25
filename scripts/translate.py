@@ -4,19 +4,12 @@ import sys
 from textwrap import dedent
 from ollama import generate
 from ollama import GenerateResponse
-
-# en    English
-# uk    Ukrainian 
-
-data_len = {
-  "en": "English",
-  "uk": "Ukrainian"
-}
+from config import TRANSLATE_MODEL, LANGUAGE_NAMES
 
 def translate(source, target, text):
 
-  source_len = data_len[source]
-  target_len = data_len[target]
+  source_len = LANGUAGE_NAMES[source]
+  target_len = LANGUAGE_NAMES[target]
 
   prompt = dedent(f"""\
   You are a professional {source_len} ({source}) to {target_len} ({target}) translator. 
@@ -24,7 +17,7 @@ def translate(source, target, text):
   Produce only the {target_len} translation, without any additional explanations or commentary. Please translate the following {source_len} text into {target_len}: {text}""")
 
   response: GenerateResponse = generate(
-      model='translategemma:4b', 
+      model=TRANSLATE_MODEL, 
       prompt=prompt,
       think=False,
       stream=False
