@@ -5,7 +5,7 @@ import sys
 from ollama import generate
 from ollama import GenerateResponse
 
-prompt = """
+prompt = """\
 Extract all the unique vocabulary words from the attached image and output as a list of words, one per line.
 Please follow these rules:
 
