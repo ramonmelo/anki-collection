@@ -1,7 +1,7 @@
 
 import sys
 
-def check_file(filename):
+def check_file(filename: str) -> None:
     with open(filename, 'r', encoding='utf-8') as f:
         lines = f.readlines()
     

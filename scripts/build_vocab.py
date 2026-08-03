@@ -7,7 +7,7 @@ from translate import translate
 from config import SOURCE_LANG, TARGET_LANG
 
 
-def build_vocab(folder_path):
+def build_vocab(folder_path: str) -> None:
   output = extract_vocabulary_from_folder(folder_path)
   words = set()
 

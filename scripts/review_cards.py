@@ -18,6 +18,7 @@ import json
 import os
 import re
 import time
+from typing import Any
 import urllib.request
 
 import requests
@@ -28,7 +29,7 @@ from translate import translate
 from generate_example import generate_example
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Populate Audio and Image fields for Anki notes."
     )
@@ -59,7 +60,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def anki_request(url, action, **params):
+def anki_request(url: str, action: str, **params: Any) -> Any:
     payload = json.dumps({"action": action, "version": 6, "params": params})
     req = urllib.request.Request(url, data=payload.encode("utf-8"))
     req.add_header("Content-Type", "application/json")
@@ -69,20 +70,20 @@ def anki_request(url, action, **params):
     return response["result"]
 
 
-def clean_text(text):
+def clean_text(text: str) -> str:
     """Remove HTML tags and extra whitespace."""
     text = re.sub(r"<[^>]+>", "", text)
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
 
-def generate_audio(text, filepath, lang):
+def generate_audio(text: str, filepath: str, lang: str) -> None:
     """Generate an mp3 file from text using gTTS."""
     tts = gTTS(text=text, lang=lang)
     tts.save(filepath)
 
 
-def fetch_image(query, filepath):
+def fetch_image(query: str, filepath: str) -> bool:
     """Search DuckDuckGo for an image and download the first result."""
 
     refined_query = f"{query} stock photo"
@@ -104,7 +105,7 @@ def fetch_image(query, filepath):
     return False
 
 
-def main(args):
+def main(args: argparse.Namespace) -> None:
     note_ids = anki_request(args.anki_url, "findNotes", query=f'"deck:{args.deck}"')
     if not note_ids:
         print(f"No notes found in deck '{args.deck}'.")

@@ -17,7 +17,7 @@ Please follow these rules:
 5. Do not write introductory text, explanations, or full sentences.
 """
 
-def extract_vocabulary_from_image(img_path):
+def extract_vocabulary_from_image(img_path: str) -> str:
     response: GenerateResponse = generate(
         model=EXTRACT_MODEL, 
         prompt=prompt,
@@ -32,7 +32,7 @@ def extract_vocabulary_from_image(img_path):
 
     return response.response
 
-def extract_vocabulary_from_folder(folder_path):
+def extract_vocabulary_from_folder(folder_path: str) -> str | None:
     # Supported image formats
     image_extensions = ('.png', '.jpg', '.jpeg', '.webp')
     

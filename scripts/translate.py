@@ -6,7 +6,7 @@ from ollama import generate
 from ollama import GenerateResponse
 from config import TRANSLATE_MODEL, LANGUAGE_NAMES
 
-def translate(source, target, text):
+def translate(source: str, target: str, text: str) -> str:
 
   source_len = LANGUAGE_NAMES[source]
   target_len = LANGUAGE_NAMES[target]
