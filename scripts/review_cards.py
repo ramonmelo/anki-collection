@@ -17,7 +17,6 @@ import argparse
 import json
 import os
 import re
-import sys
 import time
 import urllib.request
 
@@ -25,8 +24,6 @@ import requests
 from ddgs import DDGS
 from gtts import gTTS
 
-# Add the script directory to the python path to import local modules
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from translate import translate
 from generate_example import generate_example
 
